@@ -84,17 +84,6 @@ const (
 //	// Generated SQL will be: /* trace_id:123; user_id:456 */ SELECT * FROM table
 //
 // Comments are thread-safe and automatically cleared after each query execution.
-type QueryCommenter interface {
-	// AddComment adds a comment that will be included in subsequent queries for the current context.
-	// Multiple comments are joined with semicolons.
-	// Empty comments are ignored.
-	AddComment(comment string)
-
-	// ClearComments removes all previously added query comments for the current context.
-	// This is useful for explicitly clearing comments before they are automatically cleared
-	// after the next query execution.
-	ClearComments()
-}
 
 // Define common vars
 var (

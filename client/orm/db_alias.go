@@ -99,6 +99,16 @@ func (ac *_dbCache) get(name string) (al *alias, ok bool) {
 	return
 }
 
+// get database alias if cached.
+func (ac *_dbCache) remove(name string) (al *alias, ok bool) {
+	ac.mux.RLock()
+	defer ac.mux.RUnlock()
+	al, ok = ac.cache[name]
+	al.DB.DB.Close()
+	delete(ac.cache, name)
+	return
+}
+
 // get default alias.
 func (ac *_dbCache) getDefault() (al *alias) {
 	al, _ = ac.get("default")
@@ -540,6 +550,17 @@ func GetDB(aliasNames ...string) (*sql.DB, error) {
 		return al.DB.DB, nil
 	}
 	return nil, fmt.Errorf("DataBase of alias name `%s` not found", name)
+}
+
+func RemoveDB(aliasNames ...string) {
+	var name string
+	if len(aliasNames) > 0 {
+		name = aliasNames[0]
+	} else {
+		name = "default"
+	}
+	fmt.Printf("RemoveDB %s\n", name)
+	dataBaseCache.remove(name)
 }
 
 type stmtDecorator struct {

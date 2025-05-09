@@ -623,13 +623,6 @@ type stmtQuerier interface {
 //	func (q *MyQuerier) GetQueryComments() *QueryComments {
 //	    return q.comments
 //	}
-type QueryCommenter interface {
-	// GetQueryComments returns the QueryComments object associated with this querier.
-	//
-	// Comments are retrieved just before query execution and are thread-safe.
-	// The returned QueryComments instance may be nil if no comments are configured.
-	GetQueryComments() *QueryComments
-}
 
 // QueryCommenter defines the interface for adding SQL comments to queries.
 // Comments are prepended to SQL queries for debugging, tracing, or monitoring purposes.
