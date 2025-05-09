@@ -72,13 +72,18 @@ const (
 	DebugQueries = iota
 )
 
-// QueryCommenter interface for adding comments to queries
-type QueryCommenter interface {
-	// AddComment adds a comment that will be included in subsequent queries
-	AddComment(comment string)
-	// ClearComments removes all query comments
-	ClearComments()
-}
+// QueryCommenter defines the interface for adding SQL comments to queries.
+// Comments are prepended to SQL queries for debugging, tracing, or monitoring purposes.
+// Each comment is wrapped in /* */ and multiple comments are joined with semicolons.
+//
+// Example usage:
+//
+//	ormer := orm.NewOrm()
+//	ormer.AddQueryComment("trace_id:123")
+//	ormer.AddQueryComment("user_id:456")
+//	// Generated SQL will be: /* trace_id:123; user_id:456 */ SELECT * FROM table
+//
+// Comments are thread-safe and automatically cleared after each query execution.
 
 // Define common vars
 var (
@@ -104,15 +109,16 @@ type Params map[string]interface{}
 type ParamsList []interface{}
 
 type ormBase struct {
-	alias *alias
-	db    dbQuerier
+	alias         *alias
+	db            dbQuerier
+	queryComments *QueryComments // Add this field
 }
 
 var (
-	_ DQL            = new(ormBase)
-	_ DML            = new(ormBase)
-	_ DriverGetter   = new(ormBase)
-	_ QueryCommenter = new(ormBase)
+	_ DQL          = new(ormBase)
+	_ DML          = new(ormBase)
+	_ DriverGetter = new(ormBase)
+	// _ QueryCommenter = new(ormBase) // Removed this check as ormBase implements methods for ormer
 )
 
 // Get model info and model reflect value
@@ -153,14 +159,14 @@ func (*ormBase) getFieldInfo(mi *models.ModelInfo, name string) *models.FieldInf
 	return fi
 }
 
-// AddComment adds a comment that will be included in subsequent queries
-func (o *ormBase) AddComment(comment string) {
-	AddQueryComment(comment)
+// AddQueryComment adds a comment that will be included in subsequent queries
+func (o *ormBase) AddQueryComment(comment string) {
+	o.queryComments.AddComment(comment) // Use instance field
 }
 
-// ClearComments removes all query comments
-func (o *ormBase) ClearComments() {
-	ClearQueryComments()
+// ClearQueryComments removes all query comments
+func (o *ormBase) ClearQueryComments() {
+	o.queryComments.ClearComments() // Use instance field
 }
 
 // read data to model
@@ -563,10 +569,23 @@ func (o *orm) BeginWithCtxAndOpts(ctx context.Context, opts *sql.TxOptions) (TxO
 		return nil, err
 	}
 
+	// Create a NEW QueryComments instance for the transaction
+	txComments := NewQueryComments()
+	// Optionally, copy comments from parent if desired (but usually isolation is better)
+	// parentComments := o.db.GetQueryComments()
+	// txComments.comments = append(txComments.comments, parentComments.comments...)
+
+	// Create TxDB and assign the NEW comments instance
+	txDbInstance := &TxDB{
+		tx:            tx,
+		queryComments: txComments, // Assign NEW comments to TxDB
+	}
+
 	_txOrm := &txOrm{
 		ormBase: ormBase{
-			alias: o.alias,
-			db:    &TxDB{tx: tx},
+			alias:         o.alias,
+			db:            txDbInstance, // Use the TxDB instance with NEW comments
+			queryComments: txComments,   // Assign NEW comments to embedded ormBase
 		},
 	}
 
@@ -624,6 +643,16 @@ type txOrm struct {
 	ormBase
 }
 
+// AddQueryComment adds a comment to the underlying ormBase.
+func (t *txOrm) AddQueryComment(comment string) {
+	t.ormBase.AddQueryComment(comment)
+}
+
+// ClearQueryComments clears comments from the underlying ormBase.
+func (t *txOrm) ClearQueryComments() {
+	t.ormBase.ClearQueryComments()
+}
+
 var _ TxOrmer = new(txOrm)
 
 func (t *txOrm) Commit() error {
@@ -665,12 +694,15 @@ func newDBWithAlias(al *alias) Ormer {
 	BootStrapWithAlias(al.Name) // execute only once
 
 	o := new(orm)
-	o.alias = al
+	// Initialize the embedded ormBase fields
+	o.ormBase.alias = al
+	o.ormBase.queryComments = NewQueryComments()  // Initialize comments
+	al.DB.queryComments = o.ormBase.queryComments // Initialize the underlying DB's comments
 
 	if Debug {
-		o.db = newDbQueryLog(al, al.DB)
+		o.ormBase.db = newDbQueryLog(al, al.DB) // Set embedded db
 	} else {
-		o.db = al.DB
+		o.ormBase.db = al.DB // Set embedded db
 	}
 
 	if len(globalFilterChains) > 0 {

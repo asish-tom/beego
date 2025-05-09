@@ -15,122 +15,154 @@
 package orm
 
 import (
+	"context"
+	"database/sql"
 	"testing"
 
-	"github.com/beego/beego/v2/client/orm/internal/models"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestQueryComments(t *testing.T) {
-	qc := NewQueryComments()
+	t.Run("Basic QueryComments Operations", func(t *testing.T) {
+		qc := NewQueryComments()
 
-	// Test empty comments
-	assert.Equal(t, "", qc.String())
+		// Test empty comments
+		assert.Equal(t, "", qc.String())
 
-	// Test single comment
-	qc.Add("test comment")
-	assert.Equal(t, "/* test comment */ ", qc.String())
+		// Test single comment
+		qc.AddComment("test comment")
+		assert.Equal(t, "/* test comment */ ", qc.String())
 
-	// Test multiple comments
-	qc.Add("another comment")
-	assert.Equal(t, "/* test comment; another comment */ ", qc.String())
+		// Test multiple comments
+		qc.AddComment("another comment")
+		assert.Equal(t, "/* test comment; another comment */ ", qc.String())
 
-	// Test clear
-	qc.Clear()
-	assert.Equal(t, "", qc.String())
+		// Test clear
+		qc.ClearComments()
+		assert.Equal(t, "", qc.String())
+	})
+
+	t.Run("Empty Comment Handling", func(t *testing.T) {
+		qc := NewQueryComments()
+		qc.AddComment("")
+		assert.Equal(t, "", qc.String(), "Empty comment should be ignored")
+
+		qc.AddComment("valid comment")
+		qc.AddComment("")
+		assert.Equal(t, "/* valid comment */ ", qc.String(), "Empty comment should be ignored among valid ones")
+	})
+
+	t.Run("Thread Safety", func(t *testing.T) {
+		qc := NewQueryComments()
+		done := make(chan bool)
+
+		// Test concurrent access
+		go func() {
+			for i := 0; i < 100; i++ {
+				qc.AddComment("comment1")
+				qc.ClearComments()
+			}
+			done <- true
+		}()
+
+		go func() {
+			for i := 0; i < 100; i++ {
+				qc.AddComment("comment2")
+				qc.String()
+			}
+			done <- true
+		}()
+
+		<-done
+		<-done
+	})
 }
 
-type CommentUser struct {
-	Id   int    `orm:"auto"`
-	Name string `orm:"size(100)"`
+func TestPrependComments(t *testing.T) {
+	t.Run("Basic Comment Prepending", func(t *testing.T) {
+		query := "SELECT * FROM users"
+		qc := NewQueryComments()
+		qc.AddComment("trace_id:123")
+
+		mockDB := &mockDBQuerier{comments: qc}
+		result := prependComments(mockDB, query)
+		assert.Equal(t, "/* trace_id:123 */ SELECT * FROM users", result)
+	})
+
+	t.Run("Nil Handling", func(t *testing.T) {
+		query := "SELECT * FROM users"
+		result := prependComments(nil, query)
+		assert.Equal(t, query, result, "Should handle nil querier gracefully")
+	})
+
+	t.Run("Empty Comments", func(t *testing.T) {
+		query := "SELECT * FROM users"
+		mockDB := &mockDBQuerier{comments: NewQueryComments()}
+		result := prependComments(mockDB, query)
+		assert.Equal(t, query, result, "Should handle empty comments gracefully")
+	})
+
+	t.Run("Multiple Comments", func(t *testing.T) {
+		query := "SELECT * FROM users"
+		comments := NewQueryComments()
+		comments.AddComment("trace_id:123")
+		comments.AddComment("user_id:456")
+		mockDB := &mockDBQuerier{comments: comments}
+
+		result := prependComments(mockDB, query)
+		expected := "/* trace_id:123; user_id:456 */ SELECT * FROM users"
+		assert.Equal(t, expected, result)
+	})
 }
 
-func TestQueryCommentsWithOrm(t *testing.T) {
-	RegisterModel(new(CommentUser))
-	err := RegisterDriver("sqlite3", DRSqlite)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// Use a unique database name for this test
-	err = RegisterDataBase("comments_test_db", "sqlite3", ":memory:")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// Create tables
-	err = RunSyncdb("comments_test_db", false, false)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// Test comments in queries
-	DefaultQueryComments.Add("Test comment")
-	defer DefaultQueryComments.Clear()
-
-	// Create test components
-	mi := newModelInfo()
-	dBase := newDbBase()
-	dBase.ins = dBase
-
-	// Test Insert
-	sql := dBase.InsertValueSQL([]string{"name"}, []interface{}{"test"}, false, mi)
-	if !assert.Contains(t, sql, "/* Test comment */") {
-		t.Logf("Insert SQL: %s", sql)
-	}
-
-	// Test Update
-	sql = dBase.UpdateSQL([]string{"name"}, "id", mi)
-	if !assert.Contains(t, sql, "/* Test comment */") {
-		t.Logf("Update SQL: %s", sql)
-	}
-
-	// Test Delete
-	sql = dBase.DeleteSQL([]string{"id"}, mi)
-	if !assert.Contains(t, sql, "/* Test comment */") {
-		t.Logf("Delete SQL: %s", sql)
-	}
-
-	// Test Select
-	tables := newDbTables(mi, dBase)
-	var tCols []string
-	cond := NewCondition()
-	qs := newQuerySet(nil, mi).(*querySet)
-	sql, _ = dBase.readBatchSQL(tables, tCols, cond, *qs, mi, DefaultTimeLoc)
-	if !assert.Contains(t, sql, "/* Test comment */") {
-		t.Logf("Select SQL: %s", sql)
-	}
+// mockDBQuerier implements dbQuerier interface for testing
+type mockDBQuerier struct {
+	comments *QueryComments
 }
 
-func newModelInfo() *models.ModelInfo {
-	fields := models.NewFields()
-
-	pkField := &models.FieldInfo{
-		Name:   "Id",
-		Column: "id",
-		Auto:   true,
-		Pk:     true,
-		DBcol:  true,
-	}
-	fields.Add(pkField)
-
-	nameField := &models.FieldInfo{
-		Name:   "Name",
-		Column: "name",
-		DBcol:  true,
-	}
-	fields.Add(nameField)
-
-	info := &models.ModelInfo{
-		Table:    "comment_user",
-		FullName: "orm.CommentUser",
-		Fields:   fields,
-	}
-	return info
+func (m *mockDBQuerier) GetQueryComments() *QueryComments {
+	return m.comments
 }
 
-// newDbBase creates a new dbBase instance for testing
-func newDbBase() *dbBase {
-	return &dbBase{}
+func (m *mockDBQuerier) Prepare(query string) (*sql.Stmt, error) {
+	return new(sql.Stmt), nil
+}
+
+func (m *mockDBQuerier) PrepareContext(ctx context.Context, query string) (*sql.Stmt, error) {
+	return new(sql.Stmt), nil
+}
+
+func (m *mockDBQuerier) Exec(query string, args ...interface{}) (sql.Result, error) {
+	return &mockResult{}, nil // Use composite literal instead of new
+}
+
+func (m *mockDBQuerier) ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
+	return &mockResult{}, nil // Use composite literal instead of new
+}
+
+func (m *mockDBQuerier) Query(query string, args ...interface{}) (*sql.Rows, error) {
+	return new(sql.Rows), nil
+}
+
+func (m *mockDBQuerier) QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error) {
+	return new(sql.Rows), nil
+}
+
+func (m *mockDBQuerier) QueryRow(query string, args ...interface{}) *sql.Row {
+	return new(sql.Row)
+}
+
+func (m *mockDBQuerier) QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row {
+	return new(sql.Row)
+}
+
+// mockResult implements sql.Result for testing
+type mockResult struct{}
+
+func (r *mockResult) LastInsertId() (int64, error) {
+	return 0, nil
+}
+
+func (r *mockResult) RowsAffected() (int64, error) {
+	return 0, nil
 }

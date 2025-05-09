@@ -46,10 +46,24 @@ func debugLogQueies(alias *alias, operation, query string, t time.Time, err erro
 	}
 
 	logMap["flag"] = flag
-	con := fmt.Sprintf(" -[Queries/%s] - [  %s / %11s / %7.1fms] - [%s]", alias.Name, flag, operation, elsp, query)
+	// Extract any SQL comments from the query for logging
+	queryParts := strings.SplitN(query, "*/", 2)
+	var comments, actualQuery string
+	if len(queryParts) > 1 && strings.HasPrefix(strings.TrimSpace(queryParts[0]), "/*") {
+		comments = strings.TrimSpace(queryParts[0]) + "*/"
+		actualQuery = strings.TrimSpace(queryParts[1])
+	} else {
+		actualQuery = query
+	}
+
+	con := fmt.Sprintf(" -[Queries/%s] - [  %s / %11s / %7.1fms] - [%s]", alias.Name, flag, operation, elsp, actualQuery)
+	if comments != "" {
+		con = fmt.Sprintf("%s\n    Comments: %s", con, comments)
+		logMap["sql_comments"] = comments
+	}
 	logMap["alias_name"] = alias.Name
 	logMap["operation"] = operation
-	logMap["query"] = query
+	logMap["query"] = actualQuery
 	cons := make([]string, 0, len(args))
 	for _, arg := range args {
 		cons = append(cons, fmt.Sprintf("%v", arg))
@@ -184,6 +198,11 @@ func (d *dbQueryLog) QueryRowContext(ctx context.Context, query string, args ...
 	res := d.db.QueryRowContext(ctx, query, args...)
 	debugLogQueies(d.alias, "db.QueryRow", query, a, nil, args...)
 	return res
+}
+
+// GetQueryComments returns the QueryComments from the wrapped dbQuerier.
+func (d *dbQueryLog) GetQueryComments() *QueryComments {
+	return d.db.GetQueryComments()
 }
 
 func (d *dbQueryLog) Begin() (*sql.Tx, error) {

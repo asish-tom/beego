@@ -99,6 +99,16 @@ func (ac *_dbCache) get(name string) (al *alias, ok bool) {
 	return
 }
 
+// get database alias if cached.
+func (ac *_dbCache) remove(name string) (al *alias, ok bool) {
+	ac.mux.RLock()
+	defer ac.mux.RUnlock()
+	al, ok = ac.cache[name]
+	al.DB.DB.Close()
+	delete(ac.cache, name)
+	return
+}
+
 // get default alias.
 func (ac *_dbCache) getDefault() (al *alias) {
 	al, _ = ac.get("default")
@@ -110,6 +120,12 @@ type DB struct {
 	DB                  *sql.DB
 	stmtDecorators      *lru.Cache
 	stmtDecoratorsLimit int
+	queryComments       *QueryComments // Add this field
+}
+
+// GetQueryComments returns the QueryComments associated with this DB instance.
+func (d *DB) GetQueryComments() *QueryComments {
+	return d.queryComments
 }
 
 var (
@@ -220,7 +236,13 @@ func (d *DB) QueryRowContext(ctx context.Context, query string, args ...interfac
 }
 
 type TxDB struct {
-	tx *sql.Tx
+	tx            *sql.Tx
+	queryComments *QueryComments // Add this field
+}
+
+// GetQueryComments returns the QueryComments associated with this TxDB instance.
+func (t *TxDB) GetQueryComments() *QueryComments {
+	return t.queryComments
 }
 
 var (
@@ -374,8 +396,9 @@ func addAliasWthDB(aliasName, driverName string, db *sql.DB, params ...DBOption)
 func newAliasWithDb(aliasName, driverName string, db *sql.DB, params ...DBOption) (*alias, error) {
 	al := &alias{}
 	al.DB = &DB{
-		RWMutex: new(sync.RWMutex),
-		DB:      db,
+		RWMutex:       new(sync.RWMutex),
+		DB:            db,
+		queryComments: NewQueryComments(), // Initialize with new QueryComments instance
 	}
 
 	for _, p := range params {
@@ -527,6 +550,17 @@ func GetDB(aliasNames ...string) (*sql.DB, error) {
 		return al.DB.DB, nil
 	}
 	return nil, fmt.Errorf("DataBase of alias name `%s` not found", name)
+}
+
+func RemoveDB(aliasNames ...string) {
+	var name string
+	if len(aliasNames) > 0 {
+		name = aliasNames[0]
+	} else {
+		name = "default"
+	}
+	fmt.Printf("RemoveDB %s\n", name)
+	dataBaseCache.remove(name)
 }
 
 type stmtDecorator struct {

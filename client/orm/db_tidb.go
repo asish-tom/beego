@@ -49,14 +49,41 @@ func (d *dbBaseTidb) ShowColumnsQuery(table string) string {
 
 // execute sql to check index exist.
 func (d *dbBaseTidb) IndexExists(ctx context.Context, db dbQuerier, table string, name string) bool {
-	row := db.QueryRowContext(ctx, "SELECT count(*) FROM information_schema.statistics "+
-		"WHERE table_schema = DATABASE() AND table_name = ? AND index_name = ?", table, name)
+	query := "SELECT count(*) FROM information_schema.statistics " +
+		"WHERE table_schema = DATABASE() AND table_name = ? AND index_name = ?"
+
+	fullQuery := query // Default to original query
+	// Check if the dbQuerier supports getting comments (might be raw *sql.DB during syncdb)
+	if qcGetter, ok := db.(interface {
+		GetQueryComments() *QueryComments
+	}); ok {
+		qc := qcGetter.GetQueryComments()
+		if qc != nil {
+			commentStr := qc.String()
+			fullQuery = commentStr + query // Prepend only if supported and non-nil
+		}
+	}
+
+	row := db.QueryRowContext(ctx, fullQuery, table, name)
 	var cnt int
 	row.Scan(&cnt)
 	return cnt > 0
 }
 
-// create new mysql dbBaser.
+// Helper method to handle comment prepending with type assertion
+func (d *dbBaseTidb) prependCommentsIfSupported(db dbQuerier, query string) string {
+	// Check if the dbQuerier supports getting comments (might be raw *sql.DB during syncdb)
+	if qcGetter, ok := db.(interface {
+		GetQueryComments() *QueryComments
+	}); ok {
+		if qc := qcGetter.GetQueryComments(); qc != nil {
+			return qc.String() + query
+		}
+	}
+	return query
+}
+
+// create new tidb dbBaser.
 func newdbBaseTidb() dbBaser {
 	b := new(dbBaseTidb)
 	b.ins = b

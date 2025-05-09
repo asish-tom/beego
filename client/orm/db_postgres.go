@@ -179,7 +179,20 @@ func (d *dbBasePostgres) DbTypes() map[string]string {
 // check index exist in postgresql.
 func (d *dbBasePostgres) IndexExists(ctx context.Context, db dbQuerier, table string, name string) bool {
 	query := fmt.Sprintf("SELECT COUNT(*) FROM pg_indexes WHERE tablename = '%s' AND indexname = '%s'", table, name)
-	row := db.QueryRowContext(ctx, query)
+
+	fullQuery := query // Default to original query
+	// Check if the dbQuerier supports getting comments (might be raw *sql.DB during syncdb)
+	if qcGetter, ok := db.(interface {
+		GetQueryComments() *QueryComments
+	}); ok {
+		qc := qcGetter.GetQueryComments()
+		if qc != nil {
+			commentStr := qc.String()
+			fullQuery = commentStr + query // Prepend only if supported and non-nil
+		}
+	}
+
+	row := db.QueryRowContext(ctx, fullQuery)
 	var cnt int
 	row.Scan(&cnt)
 	return cnt > 0
@@ -189,6 +202,19 @@ func (d *dbBasePostgres) IndexExists(ctx context.Context, db dbQuerier, table st
 func (d *dbBasePostgres) GenerateSpecifyIndex(tableName string, useIndex int, indexes []string) string {
 	DebugLog.Println("[WARN] Not support any specifying index action, so that action is ignored")
 	return ``
+}
+
+// Helper method to handle comment prepending with type assertion
+func (d *dbBasePostgres) prependCommentsIfSupported(db dbQuerier, query string) string {
+	// Check if the dbQuerier supports getting comments (might be raw *sql.DB during syncdb)
+	if qcGetter, ok := db.(interface {
+		GetQueryComments() *QueryComments
+	}); ok {
+		if qc := qcGetter.GetQueryComments(); qc != nil {
+			return qc.String() + query
+		}
+	}
+	return query
 }
 
 // create new postgresql dbBaser.
