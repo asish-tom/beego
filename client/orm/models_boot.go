@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"runtime/debug"
 
-	imodels "github.com/beego/beego/v2/client/orm/internal/models"
+	imodels "github.com/asish-tom/beego/v2/client/orm/internal/models"
 )
 
 var defaultModelCache = imodels.NewModelCacheHandler()

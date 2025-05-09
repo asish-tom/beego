@@ -21,7 +21,7 @@ import (
 
 	"github.com/opentracing/opentracing-go"
 
-	"github.com/beego/beego/v2/client/orm"
+	"github.com/asish-tom/beego/v2/client/orm"
 )
 
 func TestFilterChainBuilderFilterChain(t *testing.T) {

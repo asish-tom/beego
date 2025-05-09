@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/beego/beego/v2/core/berror"
+	"github.com/asish-tom/beego/v2/core/berror"
 )
 
 type WriteThroughCache struct {

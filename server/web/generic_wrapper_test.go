@@ -21,9 +21,6 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"github.com/beego/beego/v2/server/web/context"
-	"github.com/beego/beego/v2/server/web/session"
-	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -31,6 +28,10 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/asish-tom/beego/v2/server/web/context"
+	"github.com/asish-tom/beego/v2/server/web/session"
+	"github.com/stretchr/testify/assert"
 )
 
 const (

@@ -21,8 +21,8 @@
 // Usage:
 // import(
 //
-//	_ "github.com/beego/beego/v2/client/cache/redis"
-//	"github.com/beego/beego/v2/client/cache"
+//	_ "github.com/asish-tom/beego/v2/client/cache/redis"
+//	"github.com/asish-tom/beego/v2/client/cache"
 //
 // )
 //
@@ -39,8 +39,8 @@ import (
 
 	"github.com/gomodule/redigo/redis"
 
-	"github.com/beego/beego/v2/client/cache"
-	"github.com/beego/beego/v2/core/berror"
+	"github.com/asish-tom/beego/v2/client/cache"
+	"github.com/asish-tom/beego/v2/core/berror"
 )
 
 const (
@@ -64,7 +64,7 @@ type Cache struct {
 
 	// skipEmptyPrefix for backward compatible,
 	// check function associate
-	// see https://github.com/beego/beego/issues/5248
+	// see https://github.com/asish-tom/beego/issues/5248
 	skipEmptyPrefix bool
 
 	// Timeout value (less than the redis server's timeout value).

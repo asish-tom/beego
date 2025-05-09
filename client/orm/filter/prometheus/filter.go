@@ -23,7 +23,7 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 
-	"github.com/beego/beego/v2/client/orm"
+	"github.com/asish-tom/beego/v2/client/orm"
 )
 
 // FilterChainBuilder is an extension point,

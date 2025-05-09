@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"strings"
 
-	imodels "github.com/beego/beego/v2/client/orm/internal/models"
+	imodels "github.com/asish-tom/beego/v2/client/orm/internal/models"
 )
 
 // getDbDropSQL Get database scheme drop sql queries

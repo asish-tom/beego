@@ -30,8 +30,8 @@
 // Usage:
 // import(
 //
-//	_ "github.com/beego/beego/v2/server/web/session/mysql"
-//	"github.com/beego/beego/v2/server/web/session"
+//	_ "github.com/asish-tom/beego/v2/server/web/session/mysql"
+//	"github.com/asish-tom/beego/v2/server/web/session"
 //
 // )
 //
@@ -50,7 +50,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 
-	"github.com/beego/beego/v2/server/web/session"
+	"github.com/asish-tom/beego/v2/server/web/session"
 )
 
 var (

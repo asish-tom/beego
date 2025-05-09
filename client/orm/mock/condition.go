@@ -17,7 +17,7 @@ package mock
 import (
 	"context"
 
-	"github.com/beego/beego/v2/client/orm"
+	"github.com/asish-tom/beego/v2/client/orm"
 )
 
 type Mock struct {

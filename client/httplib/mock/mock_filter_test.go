@@ -20,7 +20,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/beego/beego/v2/client/httplib"
+	"github.com/asish-tom/beego/v2/client/httplib"
 )
 
 func TestMockResponseFilterFilterChain(t *testing.T) {

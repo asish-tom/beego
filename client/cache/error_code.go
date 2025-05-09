@@ -15,7 +15,7 @@
 package cache
 
 import (
-	"github.com/beego/beego/v2/core/berror"
+	"github.com/asish-tom/beego/v2/core/berror"
 )
 
 var NilCacheAdapter = berror.DefineCode(4002001, moduleName, "NilCacheAdapter", `

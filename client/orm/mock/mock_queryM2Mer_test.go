@@ -20,7 +20,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/beego/beego/v2/client/orm"
+	"github.com/asish-tom/beego/v2/client/orm"
 )
 
 func TestDoNothingQueryM2Mer(t *testing.T) {

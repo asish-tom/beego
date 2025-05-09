@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/beego/beego/v2/client/orm/internal/models"
+	"github.com/asish-tom/beego/v2/client/orm/internal/models"
 )
 
 type dbIndex struct {

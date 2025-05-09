@@ -21,7 +21,7 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/beego/beego/v2/core/logs"
+	"github.com/asish-tom/beego/v2/core/logs"
 )
 
 // BeeAdminApp is the default adminApp used by admin module.

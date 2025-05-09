@@ -20,9 +20,9 @@
 //
 // import (
 //
-//	"github.com/beego/beego/v2"
-//	"github.com/beego/beego/v2/client/cache"
-//	"github.com/beego/beego/v2/server/web/captcha"
+//	"github.com/asish-tom/beego/v2"
+//	"github.com/asish-tom/beego/v2/client/cache"
+//	"github.com/asish-tom/beego/v2/server/web/captcha"
 //
 // )
 //
@@ -72,10 +72,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/beego/beego/v2/core/logs"
-	"github.com/beego/beego/v2/core/utils"
-	"github.com/beego/beego/v2/server/web"
-	"github.com/beego/beego/v2/server/web/context"
+	"github.com/asish-tom/beego/v2/core/logs"
+	"github.com/asish-tom/beego/v2/core/utils"
+	"github.com/asish-tom/beego/v2/server/web"
+	"github.com/asish-tom/beego/v2/server/web/context"
 )
 
 var defaultChars = []byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}

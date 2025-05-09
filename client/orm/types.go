@@ -20,10 +20,10 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/beego/beego/v2/client/orm/internal/models"
+	"github.com/asish-tom/beego/v2/client/orm/internal/models"
 
-	"github.com/beego/beego/v2/client/orm/clauses/order_clause"
-	"github.com/beego/beego/v2/core/utils"
+	"github.com/asish-tom/beego/v2/client/orm/clauses/order_clause"
+	"github.com/asish-tom/beego/v2/core/utils"
 )
 
 // TableNameI is usually used by model

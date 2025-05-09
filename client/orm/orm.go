@@ -19,7 +19,7 @@
 //
 //	import (
 //		"fmt"
-//		"github.com/beego/beego/v2/client/orm"
+//		"github.com/asish-tom/beego/v2/client/orm"
 //		_ "github.com/go-sql-driver/mysql" // import your used driver
 //	)
 //
@@ -57,14 +57,14 @@ import (
 	"os"
 	"reflect"
 
-	iutils "github.com/beego/beego/v2/client/orm/internal/utils"
+	iutils "github.com/asish-tom/beego/v2/client/orm/internal/utils"
 
-	"github.com/beego/beego/v2/client/orm/internal/models"
+	"github.com/asish-tom/beego/v2/client/orm/internal/models"
 
-	"github.com/beego/beego/v2/client/orm/clauses/order_clause"
-	"github.com/beego/beego/v2/client/orm/hints"
-	"github.com/beego/beego/v2/core/logs"
-	"github.com/beego/beego/v2/core/utils"
+	"github.com/asish-tom/beego/v2/client/orm/clauses/order_clause"
+	"github.com/asish-tom/beego/v2/client/orm/hints"
+	"github.com/asish-tom/beego/v2/core/logs"
+	"github.com/asish-tom/beego/v2/core/utils"
 )
 
 // DebugQueries define the debug

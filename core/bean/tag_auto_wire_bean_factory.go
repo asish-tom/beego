@@ -20,7 +20,7 @@ import (
 	"reflect"
 	"strconv"
 
-	"github.com/beego/beego/v2/core/logs"
+	"github.com/asish-tom/beego/v2/core/logs"
 )
 
 const DefaultValueTagKey = "default"

@@ -19,7 +19,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/beego/beego/v2/client/orm/internal/utils"
+	"github.com/asish-tom/beego/v2/client/orm/internal/utils"
 )
 
 // Define the Type enum

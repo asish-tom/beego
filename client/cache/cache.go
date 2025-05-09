@@ -17,7 +17,7 @@
 //
 // import(
 //
-//	"github.com/beego/beego/v2/client/cache"
+//	"github.com/asish-tom/beego/v2/client/cache"
 //
 // )
 //
@@ -35,7 +35,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/beego/beego/v2/core/berror"
+	"github.com/asish-tom/beego/v2/core/berror"
 )
 
 // Cache interface contains all behaviors for cache adapter.

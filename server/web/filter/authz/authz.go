@@ -16,8 +16,8 @@
 // Simple Usage:
 //
 //	import(
-//		"github.com/beego/beego/v2"
-//		"github.com/beego/beego/v2/server/web/filter/authz"
+//		"github.com/asish-tom/beego/v2"
+//		"github.com/asish-tom/beego/v2/server/web/filter/authz"
 //		"github.com/casbin/casbin"
 //	)
 //
@@ -44,8 +44,8 @@ import (
 
 	"github.com/casbin/casbin"
 
-	"github.com/beego/beego/v2/server/web"
-	"github.com/beego/beego/v2/server/web/context"
+	"github.com/asish-tom/beego/v2/server/web"
+	"github.com/asish-tom/beego/v2/server/web/context"
 )
 
 // NewAuthorizer returns the authorizer.

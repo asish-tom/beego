@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/beego/beego/v2/server/web"
-	"github.com/beego/beego/v2/server/web/context"
+	"github.com/asish-tom/beego/v2/server/web"
+	"github.com/asish-tom/beego/v2/server/web/context"
 )
 
 func testRequest(t *testing.T, handler *web.ControllerRegister, requestIP, method, path string, code int) {

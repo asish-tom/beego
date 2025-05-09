@@ -21,10 +21,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/beego/beego/v2/client/orm/clauses/order_clause"
-	"github.com/beego/beego/v2/client/orm/internal/buffers"
+	"github.com/asish-tom/beego/v2/client/orm/clauses/order_clause"
+	"github.com/asish-tom/beego/v2/client/orm/internal/buffers"
 
-	"github.com/beego/beego/v2/client/orm/internal/models"
+	"github.com/asish-tom/beego/v2/client/orm/internal/models"
 )
 
 func TestDbBase_InsertValueSQL(t *testing.T) {

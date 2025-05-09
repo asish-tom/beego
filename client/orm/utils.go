@@ -15,8 +15,8 @@
 package orm
 
 import (
-	"github.com/beego/beego/v2/client/orm/internal/models"
-	"github.com/beego/beego/v2/client/orm/internal/utils"
+	"github.com/asish-tom/beego/v2/client/orm/internal/models"
+	"github.com/asish-tom/beego/v2/client/orm/internal/utils"
 )
 
 type StrTo = utils.StrTo

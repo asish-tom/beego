@@ -18,7 +18,7 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/beego/beego/v2/client/orm/internal/models"
+	"github.com/asish-tom/beego/v2/client/orm/internal/models"
 )
 
 // model to model struct

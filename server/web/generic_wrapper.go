@@ -15,8 +15,8 @@
 package web
 
 import (
-	"github.com/beego/beego/v2/core/logs"
-	"github.com/beego/beego/v2/server/web/context"
+	"github.com/asish-tom/beego/v2/core/logs"
+	"github.com/asish-tom/beego/v2/server/web/context"
 )
 
 // bizFunc is a function that wraps a business logic function with a context and parameter extraction function.

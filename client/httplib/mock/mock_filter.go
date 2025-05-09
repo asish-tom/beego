@@ -18,7 +18,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/beego/beego/v2/client/httplib"
+	"github.com/asish-tom/beego/v2/client/httplib"
 )
 
 // MockResponse will return mock response if find any suitable mock data

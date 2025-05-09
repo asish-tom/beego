@@ -18,7 +18,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/beego/beego/v2/core/utils"
 	"io"
 	"net/http"
 	"os"
@@ -26,6 +25,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/asish-tom/beego/v2/core/utils"
 )
 
 var (

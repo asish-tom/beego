@@ -15,7 +15,7 @@
 // Package config is used to parse config.
 // Usage:
 //
-//	import "github.com/beego/beego/v2/core/config"
+//	import "github.com/asish-tom/beego/v2/core/config"
 //
 // Examples.
 //

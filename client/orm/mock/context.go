@@ -17,7 +17,7 @@ package mock
 import (
 	"context"
 
-	"github.com/beego/beego/v2/core/logs"
+	"github.com/asish-tom/beego/v2/core/logs"
 )
 
 type mockCtxKeyType string

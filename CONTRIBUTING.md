@@ -68,7 +68,7 @@ In our pursuit of maintaining Beego's simplicity and speed, we might not accept 
 
 ### Create issues
 
-Any significant improvement should be documented as [a GitHub issue](https://github.com/beego/beego/v2/issues) before
+Any significant improvement should be documented as [a GitHub issue](https://github.com/asish-tom/beego/v2/issues) before
 anybody starts working on it.
 
 Also when filing an issue, make sure to answer these five questions:

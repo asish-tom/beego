@@ -19,7 +19,7 @@ import (
 	"reflect"
 	"testing"
 
-	beeJson "github.com/beego/beego/v2/core/config/json"
+	beeJson "github.com/asish-tom/beego/v2/core/config/json"
 )
 
 func TestDefaults(t *testing.T) {

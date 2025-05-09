@@ -1,6 +1,6 @@
 # beego orm
 
-[![Build Status](https://drone.io/github.com/beego/beego/v2/status.png)](https://drone.io/github.com/beego/beego/v2/latest)
+[![Build Status](https://drone.io/github.com/asish-tom/beego/v2/status.png)](https://drone.io/github.com/asish-tom/beego/v2/latest)
 
 A powerful orm framework for go.
 
@@ -27,7 +27,7 @@ more features please read the docs
 
 **Install:**
 
-	go get github.com/beego/beego/v2/client/orm
+	go get github.com/asish-tom/beego/v2/client/orm
 
 ## Changelog
 
@@ -45,7 +45,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/beego/beego/v2/client/orm"
+	"github.com/asish-tom/beego/v2/client/orm"
 	_ "github.com/go-sql-driver/mysql" // import your used driver
 )
 

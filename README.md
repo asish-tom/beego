@@ -1,4 +1,4 @@
-# Beego [![Test](https://github.com/beego/beego/actions/workflows/test.yml/badge.svg?branch=develop)](https://github.com/beego/beego/actions/workflows/test.yml) [![Go Report Card](https://goreportcard.com/badge/github.com/beego/beego)](https://goreportcard.com/report/github.com/beego/beego) [![Go Reference](https://pkg.go.dev/badge/github.com/beego/beego/v2.svg)](https://pkg.go.dev/github.com/beego/beego/v2)
+# Beego [![Test](https://github.com/asish-tom/beego/actions/workflows/test.yml/badge.svg?branch=develop)](https://github.com/asish-tom/beego/actions/workflows/test.yml) [![Go Report Card](https://goreportcard.com/badge/github.com/asish-tom/beego)](https://goreportcard.com/report/github.com/asish-tom/beego) [![Go Reference](https://pkg.go.dev/badge/github.com/asish-tom/beego/v2.svg)](https://pkg.go.dev/github.com/asish-tom/beego/v2)
 
 Beego is used for rapid development of enterprise application in Go, including RESTful APIs, web apps and backend services.
 
@@ -7,9 +7,9 @@ It is inspired by Tornado, Sinatra and Flask. beego has some Go-specific feature
 ## Quick Start
 - [New Doc Website - unavailable](https://beego.gocn.vip)
 - [New Doc Website Backup @flycash](https://doc.meoying.com/en-US/beego/developing/)
-- [New Doc Website source code](https://github.com/beego/beego-doc)
+- [New Doc Website source code](https://github.com/asish-tom/beego-doc)
 - [Old Doc - github](https://github.com/beego/beedoc)
-- [Example](https://github.com/beego/beego-example)
+- [Example](https://github.com/asish-tom/beego-example)
 
 > Kindly remind that sometimes the HTTPS certificate is expired, you may get some NOT SECURE warning
 
@@ -26,14 +26,14 @@ It is inspired by Tornado, Sinatra and Flask. beego has some Go-specific feature
 
 #### Download and install
 
-    go get github.com/beego/beego/v2@latest
+    go get github.com/asish-tom/beego/v2@latest
 
 #### Create file `hello.go`
 
 ```go
 package main
 
-import "github.com/beego/beego/v2/server/web"
+import "github.com/asish-tom/beego/v2/server/web"
 
 func main() {
 	web.Run()
