@@ -104,8 +104,14 @@ func (ac *_dbCache) remove(name string) (al *alias, ok bool) {
 	ac.mux.RLock()
 	defer ac.mux.RUnlock()
 	al, ok = ac.cache[name]
-	al.DB.DB.Close()
-	delete(ac.cache, name)
+	if ok {
+		al.DB.DB.Close()
+		fmt.Printf("Closed DB%s\n", name)
+
+		delete(ac.cache, name)
+		fmt.Printf("Removed DB %s\n", name)
+
+	}
 	return
 }
 
